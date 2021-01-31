@@ -1,4 +1,4 @@
-package com.javaguides.javafx.registration;
+package dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,10 +11,10 @@ public class JdbcDao {
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/conference-management-system?useSSL=false";
     private static final String DATABASE_USERNAME = "root";
     private static final String DATABASE_PASSWORD = "bibo1997";
-    private static final String INSERT_QUERY = "INSERT INTO registration (full_name, email_id, password) VALUES (?, ?, ?)";
+    private static final String INSERT_QUERY = "INSERT INTO user (username, password) VALUES (?, ?)";
 
 
-    public void insertRecord(String fullName, String emailId, String password) throws SQLException {
+    public void registerUser(String fullName, String emailId, String password) throws SQLException {
 
         // Step 1: Establishing a Connection and
         // try-with-resource statement will auto close the connection.
@@ -23,9 +23,26 @@ public class JdbcDao {
 
              // Step 2:Create a statement using connection object
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY)) {
-            preparedStatement.setString(1, fullName);
-            preparedStatement.setString(2, emailId);
-            preparedStatement.setString(3, password);
+            preparedStatement.setString(1, emailId);
+            preparedStatement.setString(2, password);
+
+            System.out.println(preparedStatement);
+            // Step 3: Execute the query or update query
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            // print SQL exception information
+            printSQLException(e);
+        }
+    }
+
+    public void checkLogin(String emailId, String password) throws SQLException {
+
+        try (Connection connection = DriverManager
+                .getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY)) {
+            preparedStatement.setString(1, emailId);
+            preparedStatement.setString(2, password);
 
             System.out.println(preparedStatement);
             // Step 3: Execute the query or update query
