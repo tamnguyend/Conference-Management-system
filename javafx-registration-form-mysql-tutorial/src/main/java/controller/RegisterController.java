@@ -3,18 +3,18 @@ package controller;
 import java.sql.SQLException;
 
 import dao.JdbcDao;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 
 public class RegisterController {
-
-    @FXML
-    private TextField fullNameField;
 
     @FXML
     private TextField emailIdField;
@@ -29,22 +29,19 @@ public class RegisterController {
     private Button loginButton;
 
     @FXML
+    private ComboBox rolesList;
+
+    @FXML
     public void register(ActionEvent event) throws SQLException {
 
         Window owner = registerButton.getScene().getWindow();
 
-        System.out.println(fullNameField.getText());
         System.out.println(emailIdField.getText());
         System.out.println(passwordField.getText());
-        if (fullNameField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
-                    "Please enter your name");
-            return;
-        }
 
         if (emailIdField.getText().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
-                    "Please enter your email id");
+                    "Please enter your id");
             return;
         }
         if (passwordField.getText().isEmpty()) {
@@ -53,15 +50,14 @@ public class RegisterController {
             return;
         }
 
-        String fullName = fullNameField.getText();
         String emailId = emailIdField.getText();
         String password = passwordField.getText();
 
         JdbcDao jdbcDao = new JdbcDao();
-        jdbcDao.registerUser(fullName, emailId, password);
+        jdbcDao.registerUser(emailId, password);
 
         showAlert(Alert.AlertType.CONFIRMATION, owner, "Registration Successful!",
-                "Welcome " + fullNameField.getText());
+                "Welcome " + emailIdField.getText());
     }
 
     @FXML
@@ -74,7 +70,7 @@ public class RegisterController {
 
         if (emailIdField.getText().isEmpty()) {
             showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
-                    "Please enter your email id");
+                    "Please enter your id");
             return;
         }
         if (passwordField.getText().isEmpty()) {
@@ -87,10 +83,25 @@ public class RegisterController {
         String password = passwordField.getText();
 
         JdbcDao jdbcDao = new JdbcDao();
-        jdbcDao.checkLogin(emailId, password);
+        if (jdbcDao.checkLogin(emailId, password)) {
+            try {
+                System.out.println(getClass());
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/main_form.fxml"));
+                Stage stage = new Stage();
+                stage.setTitle("Main Page");
+                stage.setScene(new Scene(root, 800, 500));
+                stage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-        showAlert(Alert.AlertType.CONFIRMATION, owner, "Registration Successful!",
-                "Welcome " + fullNameField.getText());
+    }
+
+    public void setData() {
+        ObservableList<String> roles = FXCollections.observableArrayList("Author","Referee");
+        rolesList.getItems().clear();
+        rolesList.getItems().addAll(roles);
     }
 
     private static void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {

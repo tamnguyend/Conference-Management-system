@@ -1,11 +1,13 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <GridPane fx:controller="controller.RegisterController"
           xmlns:fx="http://javafx.com/fxml" alignment="center"
           hgap="10" vgap="10">
@@ -36,10 +38,23 @@
     <!-- Add Password Field -->
     <PasswordField fx:id="passwordField" prefHeight="40" prefWidth="50"
                    GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+    <Label text="Roles : " GridPane.columnIndex="0"
+           GridPane.rowIndex="4"></Label>
+    <!-- Add Password Field -->
+    <ComboBox fx:id="rolesList" prefHeight="40" prefWidth="50"
+                   GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Author" />
+                <String fx:value="Referee" />
+            </FXCollections>
+        </items>
+    </ComboBox>
     <!-- Add Submit Button -->
     <Button fx:id="registerButton" text="Register"
             prefWidth="100" prefHeight="40" defaultButton="true"
-            GridPane.columnIndex="1" GridPane.rowIndex="4"
+            GridPane.columnIndex="1" GridPane.rowIndex="5"
             GridPane.columnSpan="1" GridPane.rowSpan="1"
             GridPane.halignment="LEFT"
             onAction="#register">
@@ -49,7 +64,7 @@
     </Button>
     <Button fx:id="loginButton" text="Login"
             prefWidth="100" prefHeight="40" defaultButton="true"
-            GridPane.columnIndex="1" GridPane.rowIndex="4"
+            GridPane.columnIndex="1" GridPane.rowIndex="5"
             GridPane.columnSpan="1" GridPane.rowSpan="1"
             GridPane.halignment="right"
             onAction="#login">
