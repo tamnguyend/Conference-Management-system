@@ -3,6 +3,8 @@ package controller;
 import java.sql.SQLException;
 
 import dao.JdbcDao;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,7 +31,7 @@ public class RegisterController {
     private Button loginButton;
 
     @FXML
-    private ComboBox rolesList;
+    private ChoiceBox rolesList;
 
     @FXML
     public void register(ActionEvent event) throws SQLException {
@@ -52,9 +54,10 @@ public class RegisterController {
 
         String emailId = emailIdField.getText();
         String password = passwordField.getText();
+        Object role = rolesList.getValue();
 
         JdbcDao jdbcDao = new JdbcDao();
-        jdbcDao.registerUser(emailId, password);
+        jdbcDao.registerUser(emailId, password, role.toString());
 
         showAlert(Alert.AlertType.CONFIRMATION, owner, "Registration Successful!",
                 "Welcome " + emailIdField.getText());
@@ -99,7 +102,7 @@ public class RegisterController {
     }
 
     public void setData() {
-        ObservableList<String> roles = FXCollections.observableArrayList("Author","Referee");
+        ObservableList<String> roles = FXCollections.observableArrayList("Author", "Referee");
         rolesList.getItems().clear();
         rolesList.getItems().addAll(roles);
     }

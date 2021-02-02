@@ -10,8 +10,9 @@ public class JdbcDao {
     private static final String DATABASE_PASSWORD = "bibo1997"; //password to connect to mySQL of user root
     private static final String REGISTER_QUERY = "INSERT INTO user (username, password) VALUES (?, ?)";
     private static final String CHECK_LOGIN_QUERY = "SELECT * FROM user where username = ? and password = ?";
+    private static final String INSERT_USER_ROLE = "INSERT INTO user_role (fk_user, fk_role) VALUES (?, ?)";
 
-    public void registerUser(String emailId, String password) throws SQLException {
+    public void registerUser(String emailId, String password, String role) throws SQLException {
 
         // Step 1: Establishing a Connection and
         // try-with-resource statement will auto close the connection.
@@ -19,12 +20,37 @@ public class JdbcDao {
                 .getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
 
              // Step 2:Create a statement using connection object
-             PreparedStatement preparedStatement = connection.prepareStatement(REGISTER_QUERY)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(REGISTER_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, emailId);
             preparedStatement.setString(2, password);
 
             System.out.println(preparedStatement);
             // Step 3: Execute the query or update query
+            preparedStatement.executeUpdate();
+            ResultSet rs = preparedStatement.getGeneratedKeys();
+            int generatedKey = 0;
+            if (rs.next()) {
+                generatedKey = rs.getInt(1);
+                if (role == "Author") {
+                    createRoleUser(generatedKey, 2);
+                } else {
+                    createRoleUser(generatedKey, 3);
+                }
+            }
+        } catch (SQLException e) {
+            // print SQL exception information
+            printSQLException(e);
+        }
+    }
+
+    public void createRoleUser(int userId, int roleId) throws SQLException {
+        try (Connection connection = DriverManager
+                .getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_ROLE)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, roleId);
+
+            System.out.println(preparedStatement);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             // print SQL exception information
