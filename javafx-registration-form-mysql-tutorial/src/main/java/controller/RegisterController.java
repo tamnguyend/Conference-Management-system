@@ -1,6 +1,8 @@
 package controller;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import dao.JdbcDao;
 import javafx.beans.value.ChangeListener;
@@ -13,8 +15,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import sun.plugin.javascript.navig.Anchor;
 
 public class RegisterController {
 
@@ -34,7 +39,10 @@ public class RegisterController {
     private ChoiceBox rolesList;
 
     @FXML
-    public void register(ActionEvent event) throws SQLException {
+    private GridPane rootPane;
+
+    @FXML
+    public void register(ActionEvent event) throws SQLException, IOException {
 
         Window owner = registerButton.getScene().getWindow();
 
@@ -51,16 +59,32 @@ public class RegisterController {
                     "Please enter a password");
             return;
         }
+        Object role = rolesList.getValue();
+        if (role == null) {
+            showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
+                    "Please choose your role");
+            return;
+        }
 
         String emailId = emailIdField.getText();
         String password = passwordField.getText();
-        Object role = rolesList.getValue();
+
 
         JdbcDao jdbcDao = new JdbcDao();
-        jdbcDao.registerUser(emailId, password, role.toString());
-
-        showAlert(Alert.AlertType.CONFIRMATION, owner, "Registration Successful!",
-                "Welcome " + emailIdField.getText());
+        if (jdbcDao.registerUser(emailId, password, role.toString())) {
+            showAlert(Alert.AlertType.CONFIRMATION, owner, "Registration Successful!",
+                    "Welcome user " + emailIdField.getText());
+            toMainPage();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setContentText("Do you want to login instead?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.YES) {
+                toMainPage();
+            } else {
+                // ... user chose CANCEL or closed the dialog
+            }
+        }
     }
 
     @FXML
@@ -81,30 +105,34 @@ public class RegisterController {
                     "Please enter a password");
             return;
         }
+        Object role = rolesList.getValue();
+        if (role == null) {
+            showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
+                    "Please choose the role you want to login to the Application");
+            return;
+        }
 
         String emailId = emailIdField.getText();
         String password = passwordField.getText();
 
         JdbcDao jdbcDao = new JdbcDao();
-        if (jdbcDao.checkLogin(emailId, password)) {
+        if (jdbcDao.checkLogin(emailId, password, role.toString())) {
             try {
                 System.out.println(getClass());
-                Parent root = FXMLLoader.load(getClass().getResource("/fxml/main_form.fxml"));
-                Stage stage = new Stage();
-                stage.setTitle("Main Page");
-                stage.setScene(new Scene(root, 800, 500));
-                stage.show();
+                toMainPage();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            showAlert(Alert.AlertType.ERROR, owner, "Authentication Fail",
+                    "Please input your credential again !!!");
         }
 
     }
 
-    public void setData() {
-        ObservableList<String> roles = FXCollections.observableArrayList("Author", "Referee");
-        rolesList.getItems().clear();
-        rolesList.getItems().addAll(roles);
+    public void toMainPage() throws IOException {
+        GridPane pane = FXMLLoader.load(getClass().getResource("/fxml/main_form.fxml"));
+        rootPane.getChildren().setAll(pane);
     }
 
     private static void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {

@@ -1,14 +1,77 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import javafx.scene.control.ChoiceBox?>
+<GridPane fx:id=""
+          fx:controller="controller.MainController"
+          xmlns:fx="http://javafx.com/fxml" alignment="center"
+          hgap="10" vgap="10">
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+    <!-- Add Header Label -->
+    <Label text="Conference Management System" GridPane.columnIndex="0"
+           GridPane.rowIndex="0" GridPane.columnSpan="2"
+           GridPane.rowSpan="1" GridPane.halignment="CENTER">
+        <font>
+            <Font name="Arial" size="24"></Font>
+        </font>
+        <GridPane.margin>
+            <Insets top="20" right="0" bottom="20" left="0"></Insets>
+        </GridPane.margin>
+    </Label>
+    <!-- Add Email Label -->
+    <Label text="ID : " GridPane.columnIndex="0"
+           GridPane.rowIndex="2"></Label>
+    <!-- Add Email Text Field -->
+    <TextField fx:id="emailIdField" prefHeight="40"
+               GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    <!-- Add Password Label -->
+    <Label text="Password : " GridPane.columnIndex="0"
+           GridPane.rowIndex="3"></Label>
+    <!-- Add Password Field -->
+    <PasswordField fx:id="passwordField" prefHeight="40" prefWidth="50"
+                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controller.MainController"
-            prefHeight="400.0" prefWidth="600.0">
-
-</AnchorPane>
+    <Label text="Roles : " GridPane.columnIndex="0"
+           GridPane.rowIndex="4"></Label>
+    <!-- Add Password Field -->
+    <ChoiceBox fx:id="rolesList" prefHeight="40" prefWidth="100"
+               GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Author"/>
+                <String fx:value="Referee"/>
+            </FXCollections>
+        </items>
+    </ChoiceBox>
+    <!-- Add Submit Button -->
+    <Button fx:id="registerButton" text="Register"
+            prefWidth="100" prefHeight="40" defaultButton="true"
+            GridPane.columnIndex="1" GridPane.rowIndex="5"
+            GridPane.columnSpan="1" GridPane.rowSpan="1"
+            GridPane.halignment="LEFT"
+            onAction="#submitFile">
+        <GridPane.margin>
+            <Insets top="20" right="0" bottom="20" left="0"></Insets>
+        </GridPane.margin>
+    </Button>
+    <Button fx:id="loginButton" text="Login"
+            prefWidth="100" prefHeight="40" defaultButton="true"
+            GridPane.columnIndex="1" GridPane.rowIndex="5"
+            GridPane.columnSpan="1" GridPane.rowSpan="1"
+            GridPane.halignment="right"
+            onAction="#showAll">
+        <GridPane.margin>
+            <Insets top="20" right="0" bottom="20" left="0"></Insets>
+        </GridPane.margin>
+    </Button>
+</GridPane>
