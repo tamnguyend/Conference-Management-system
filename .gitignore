@@ -1,1 +1,17 @@
 *.jar
+*/target/*
+*.class
+.DS_Store
+bin/
+target/
+.sonar/
+.settings/
+.externalToolBuilders/
+*.*~
+.idea/
+*.iml
+__pycache__/
+.pydevproject
+*.pyc
+.project
+.classpath
