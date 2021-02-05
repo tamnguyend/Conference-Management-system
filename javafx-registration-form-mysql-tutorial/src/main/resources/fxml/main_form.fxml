@@ -18,14 +18,14 @@
     </padding>
 
     <!-- Add Header Label -->
-    <Label text="Conference Management System" GridPane.columnIndex="0"
+    <Label text="WELCOME TO MAIN PAGE" GridPane.columnIndex="0"
            GridPane.rowIndex="0" GridPane.columnSpan="2"
            GridPane.rowSpan="1" GridPane.halignment="CENTER">
         <font>
             <Font name="Arial" size="24"></Font>
         </font>
         <GridPane.margin>
-            <Insets top="20" right="0" bottom="20" left="0"></Insets>
+            <Insets top="0" right="0" bottom="20" left="0"></Insets>
         </GridPane.margin>
     </Label>
     <!-- Add Email Label -->
