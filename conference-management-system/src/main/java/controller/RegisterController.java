@@ -125,5 +125,6 @@ public class RegisterController {
         firstNameField.clear();
         lastNameField.clear();
         universityField.clear();
+        rolesList.setValue(null);
     }
 }

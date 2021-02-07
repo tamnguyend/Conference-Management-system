@@ -2,6 +2,7 @@ package entity.DTO;
 
 
 public class UserDTO {
+    int userId;
     String email;
     String password;
     String firstName;
@@ -67,5 +68,13 @@ public class UserDTO {
 
     public void setRoles(String roles) {
         this.roles = roles;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

@@ -1,12 +1,14 @@
 package controller;
 
 import dao.JdbcDao;
+import entity.DTO.UserResponseDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Window;
+import main.UserSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -60,9 +62,10 @@ public class LoginController {
         String password = passwordField.getText();
 
         JdbcDao jdbcDao = new JdbcDao();
-        String userRole = jdbcDao.checkLogin(emailId, password);
-        if (userRole != null) {
+        UserResponseDTO userResponseDTO = jdbcDao.checkLogin(emailId, password);
+        if (userResponseDTO != null) {
             try {
+                UserSession.getInstance(userResponseDTO.getUsername(),userResponseDTO.getUserId(),userResponseDTO.getRole());
                 System.out.println(getClass());
                 toMainPage();
             } catch (Exception e) {

@@ -25,7 +25,7 @@ public class MainController {
         Stage stage = new Stage();
         stage.setTitle("Conference Management System");
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setScene(new Scene(root, 400, 300));
+        stage.setScene(new Scene(root, 500, 400));
         stage.show();
     }
 
