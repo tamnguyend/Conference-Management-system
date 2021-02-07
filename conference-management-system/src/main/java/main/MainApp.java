@@ -12,9 +12,9 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         System.out.println(getClass());
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/registration_form.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/login_form.fxml"));
         stage.setTitle("Conference Management System");
-        stage.setScene(new Scene(root, 650, 400));
+        stage.setScene(new Scene(root, 750, 550));
         stage.show();
 
     }

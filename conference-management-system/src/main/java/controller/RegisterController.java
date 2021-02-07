@@ -5,21 +5,13 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import dao.JdbcDao;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import entity.DTO.UserDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import javafx.stage.Window;
-import sun.plugin.javascript.navig.Anchor;
 
 public class RegisterController {
 
@@ -30,10 +22,16 @@ public class RegisterController {
     private PasswordField passwordField;
 
     @FXML
-    private Button registerButton;
+    private TextField firstNameField;
 
     @FXML
-    private Button loginButton;
+    private TextField lastNameField;
+
+    @FXML
+    private TextField universityField;
+
+    @FXML
+    private Button registerButton;
 
     @FXML
     private ChoiceBox rolesList;
@@ -59,8 +57,24 @@ public class RegisterController {
                     "Please enter a password");
             return;
         }
-        Object role = rolesList.getValue();
-        if (role == null) {
+
+        if (firstNameField.getText().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
+                    "Please enter your first name");
+            return;
+        }
+        if (lastNameField.getText().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
+                    "Please enter a last name");
+            return;
+        }
+        if (universityField.getText().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
+                    "Please enter a university");
+            return;
+        }
+
+        if (rolesList.getValue() == null) {
             showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
                     "Please choose your role");
             return;
@@ -68,10 +82,13 @@ public class RegisterController {
 
         String emailId = emailIdField.getText();
         String password = passwordField.getText();
-
+        String firstName = firstNameField.getText();
+        String lastName = lastNameField.getText();
+        String university = universityField.getText();
+        UserDTO userDTO = new UserDTO(emailId, password, firstName, lastName, university, rolesList.getValue().toString());
 
         JdbcDao jdbcDao = new JdbcDao();
-        if (jdbcDao.registerUser(emailId, password, role.toString())) {
+        if (jdbcDao.registerUser(userDTO)) {
             showAlert(Alert.AlertType.CONFIRMATION, owner, "Registration Successful!",
                     "Welcome user " + emailIdField.getText());
             toMainPage();
@@ -87,48 +104,6 @@ public class RegisterController {
         }
     }
 
-    @FXML
-    public void login(ActionEvent event) throws SQLException {
-
-        Window owner = loginButton.getScene().getWindow();
-
-        System.out.println(emailIdField.getText());
-        System.out.println(passwordField.getText());
-
-        if (emailIdField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
-                    "Please enter your id");
-            return;
-        }
-        if (passwordField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
-                    "Please enter a password");
-            return;
-        }
-        Object role = rolesList.getValue();
-        if (role == null) {
-            showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
-                    "Please choose the role you want to login to the Application");
-            return;
-        }
-
-        String emailId = emailIdField.getText();
-        String password = passwordField.getText();
-
-        JdbcDao jdbcDao = new JdbcDao();
-        if (jdbcDao.checkLogin(emailId, password, role.toString())) {
-            try {
-                System.out.println(getClass());
-                toMainPage();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            showAlert(Alert.AlertType.ERROR, owner, "Authentication Fail",
-                    "Please input your credential again !!!");
-        }
-
-    }
 
     public void toMainPage() throws IOException {
         GridPane pane = FXMLLoader.load(getClass().getResource("/fxml/main_form.fxml"));
@@ -142,5 +117,13 @@ public class RegisterController {
         alert.setContentText(message);
         alert.initOwner(owner);
         alert.show();
+    }
+
+    public void clear(ActionEvent actionEvent) {
+        emailIdField.clear();
+        passwordField.clear();
+        firstNameField.clear();
+        lastNameField.clear();
+        universityField.clear();
     }
 }
