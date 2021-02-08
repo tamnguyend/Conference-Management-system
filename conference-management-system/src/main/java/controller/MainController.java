@@ -5,18 +5,18 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import main.UserSession;
+import org.controlsfx.control.spreadsheet.Grid;
 
 import java.io.IOException;
 
 public class MainController {
 
     @FXML
-    private AnchorPane rootPane;
-
-
+    private GridPane mainPane;
 
     @FXML
     public void submitFile(ActionEvent actionEvent) throws IOException {
@@ -31,5 +31,13 @@ public class MainController {
 
     @FXML
     public void showAll(ActionEvent actionEvent) {
+    }
+
+    public void logOut(ActionEvent actionEvent) throws IOException {
+        UserSession userSession = new UserSession("",0,"");
+        userSession.cleanUserSession();
+        GridPane pane = FXMLLoader.load(getClass().getResource("/fxml/login_form.fxml"));
+
+        mainPane.getChildren().setAll(pane);
     }
 }

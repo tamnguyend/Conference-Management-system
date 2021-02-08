@@ -85,19 +85,20 @@ public class RegisterController {
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
         String university = universityField.getText();
-        UserDTO userDTO = new UserDTO(emailId, password, firstName, lastName, university, rolesList.getValue().toString());
+        String roleName = rolesList.getValue().toString();
+        UserDTO userDTO = new UserDTO(emailId, password, firstName, lastName, university, roleName);
 
         JdbcDao jdbcDao = new JdbcDao();
         if (jdbcDao.registerUser(userDTO)) {
             showAlert(Alert.AlertType.CONFIRMATION, owner, "Registration Successful!",
                     "Welcome user " + emailIdField.getText());
-            toMainPage();
+            toMainPage(roleName);
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setContentText("Do you want to login instead?");
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.YES) {
-                toMainPage();
+                toMainPage(roleName);
             } else {
                 // ... user chose CANCEL or closed the dialog
             }
@@ -105,8 +106,14 @@ public class RegisterController {
     }
 
 
-    public void toMainPage() throws IOException {
-        GridPane pane = FXMLLoader.load(getClass().getResource("/fxml/main_form.fxml"));
+    public void toMainPage(String roleName) throws IOException {
+        String page;
+        if (roleName.equals("Author")) {
+            page = "/fxml/main_form_author.fxml";
+        } else {
+            page = "/fxml/main_form_referee.fxml";
+        }
+        GridPane pane = FXMLLoader.load(getClass().getResource(page));
         rootPane.getChildren().setAll(pane);
     }
 

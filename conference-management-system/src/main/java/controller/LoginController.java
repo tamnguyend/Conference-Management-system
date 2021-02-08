@@ -5,14 +5,16 @@ import entity.DTO.UserResponseDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import main.UserSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Optional;
 
 public class LoginController {
 
@@ -27,9 +29,6 @@ public class LoginController {
 
     @FXML
     private Button loginButton;
-
-    @FXML
-    private ChoiceBox rolesList;
 
     @FXML
     private GridPane rootPane;
@@ -65,21 +64,29 @@ public class LoginController {
         UserResponseDTO userResponseDTO = jdbcDao.checkLogin(emailId, password);
         if (userResponseDTO != null) {
             try {
-                UserSession.getInstance(userResponseDTO.getUsername(),userResponseDTO.getUserId(),userResponseDTO.getRole());
+                UserSession.getInstance(userResponseDTO.getUsername(), userResponseDTO.getUserId(), userResponseDTO.getRole());
                 System.out.println(getClass());
-                toMainPage();
+                if (userResponseDTO.getRole().equals("author")) {
+                    toMainPage("/fxml/main_form_author.fxml");
+                } else {
+                    toMainPage("/fxml/main_form_referee.fxml");
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             showAlert(Alert.AlertType.ERROR, owner, "Authentication Fail",
                     "Please input your credential again !!!");
+            emailIdField.clear();
+            passwordField.clear();
+            emailIdField.requestFocus();
         }
-
     }
 
-    public void toMainPage() throws IOException {
-        GridPane pane = FXMLLoader.load(getClass().getResource("/fxml/main_form.fxml"));
+    public void toMainPage(String page) throws IOException {
+        System.out.println(getClass());
+
+        GridPane pane = FXMLLoader.load(getClass().getResource(page));
         rootPane.getChildren().setAll(pane);
     }
 

@@ -5,20 +5,21 @@ import entity.DTO.PaperDTO;
 import entity.DTO.UserDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.stage.Window;
 import main.UserSession;
 
-import java.util.Arrays;
+import java.net.URL;
 import java.util.List;
-import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
-public class UploadPaperController {
+import org.controlsfx.control.textfield.TextFields;
 
-    @FXML
-    private Button closeButton;
+public class UploadPaperController implements Initializable {
 
     @FXML
     private Button uploadPaper;
@@ -35,6 +36,12 @@ public class UploadPaperController {
     @FXML
     private TextField subjectField;
 
+    @FXML
+    private TextField associateAuthors;
+
+    List<UserDTO> authorList;
+
+    UserSession userSession = UserSession.getInstance("", 0, "");
 
     @FXML
     public void upload(ActionEvent actionEvent) {
@@ -62,18 +69,27 @@ public class UploadPaperController {
                     "Please enter a subject paper");
             return;
         }
-        UserSession userSession = UserSession.getInstance("",0,"");
+        if (associateAuthors.getText().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, owner, "Form Error!",
+                    "Please enter a associate author");
+            return;
+        }
+
         int id = userSession.getUserId();
         String titleFieldText = titleField.getText();
         String abstractFieldText = abstractField.getText();
         String keywordFieldText = keywordField.getText();
         String subjectFieldText = subjectField.getText();
-        List<Integer> authorIds = Arrays.asList(1, 2);
+
+        List<Integer> authorIds = authorList.stream()
+                .filter(i -> i.getEmail().equals(associateAuthors.getText()))
+                .filter(i -> !i.getEmail().equals(userSession.getUserName()))
+                .map(UserDTO::getUserId).collect(Collectors.toList());
         PaperDTO paperDTO = new PaperDTO(userSession.getUserId(), titleFieldText,
                 abstractFieldText, keywordFieldText, subjectFieldText, authorIds);
 
         JdbcDao jdbcDao = new JdbcDao();
-        jdbcDao.upload(paperDTO);
+        jdbcDao.uploadPaper(paperDTO);
 //        if (jdbcDao.registerUser(userDTO)) {
 //            showAlert(Alert.AlertType.CONFIRMATION, owner, "Registration Successful!",
 //                    "Welcome user " + emailIdField.getText());
@@ -102,5 +118,16 @@ public class UploadPaperController {
         alert.setContentText(message);
         alert.initOwner(owner);
         alert.show();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        JdbcDao dao = new JdbcDao();
+        authorList = dao.getAllAuthor();
+        List<String> authors = authorList
+                .stream()
+                .filter(author -> author.getEmail().equals(userSession.getUserName()))
+                .map(UserDTO::getEmail).collect(Collectors.toList());
+        TextFields.bindAutoCompletion(associateAuthors, authors);
     }
 }

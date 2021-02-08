@@ -22,6 +22,8 @@ public class JdbcDao {
     private static final String CHECK_USER_EXIST = "SELECT * from user where user.email = ?";
     private static final String INSERT_PAPER = "INSERT INTO paper (abstract,title,keywords,userId,subject) " +
             "VALUES (?, ?, ?, ?, ?)";
+    private static final String INSERT_PAPER_AUTHOR = "INSERT INTO paper_authors (paperId, userId) " +
+            "VALUES (?, ?)";
     private static final String GET_ALL_AUTHOR = "SELECT * FROM user where role = ?";
 
 
@@ -97,17 +99,38 @@ public class JdbcDao {
         return null;
     }
 
-    public boolean upload(PaperDTO paperDTO) {
+    public boolean uploadPaper(PaperDTO paperDTO) {
         try (Connection connection = DriverManager
                 .getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
              // Step 2:Create a statement using connection object
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PAPER)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PAPER,
+                     PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, paperDTO.getAbstract());
             preparedStatement.setString(2, paperDTO.getTile());
             preparedStatement.setString(3, paperDTO.getKeyword());
             preparedStatement.setInt(4, paperDTO.getUploadedAuthorId());
             preparedStatement.setString(5, paperDTO.getSubject());
+            System.out.println(preparedStatement);
+            // Step 3: Execute the query or update query
+            preparedStatement.executeUpdate();
+            ResultSet rs = preparedStatement.getGeneratedKeys();
+            if(rs.next()){
+                createPaperAuthor(rs.getInt(1), paperDTO.getAuthorIds());
+            }
+        } catch (SQLException e) {
+            // print SQL exception information
+            printSQLException(e);
+        }
+        return true;
+    }
 
+    public void createPaperAuthor(int paperId, List<Integer> authorIds) {
+        try (Connection connection = DriverManager
+                .getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+             // Step 2:Create a statement using connection object
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PAPER_AUTHOR)) {
+            preparedStatement.setInt(1, paperId);
+            preparedStatement.setInt(2, authorIds.get(0));
             System.out.println(preparedStatement);
             // Step 3: Execute the query or update query
             preparedStatement.executeUpdate();
@@ -116,7 +139,6 @@ public class JdbcDao {
             // print SQL exception information
             printSQLException(e);
         }
-        return true;
     }
 
     public List<UserDTO> getAllAuthor() {
