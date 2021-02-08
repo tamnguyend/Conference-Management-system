@@ -32,6 +32,16 @@
             <Insets top="20" right="0" bottom="20" left="0"></Insets>
         </GridPane.margin>
     </Button>
+    <Button fx:id="showAll" text="Show Status of Paper"
+            prefWidth="100" prefHeight="40" defaultButton="true"
+            GridPane.columnIndex="1" GridPane.rowIndex="4"
+            GridPane.columnSpan="1" GridPane.rowSpan="1"
+            GridPane.halignment="CENTER"
+            onAction="#submitFile">
+        <GridPane.margin>
+            <Insets top="20" right="0" bottom="20" left="0"></Insets>
+        </GridPane.margin>
+    </Button>
     <Button fx:id="logOut" text="Log Out"
             prefWidth="100" prefHeight="40" defaultButton="true"
             GridPane.columnIndex="1" GridPane.rowIndex="5"

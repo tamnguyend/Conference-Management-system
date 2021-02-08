@@ -25,6 +25,7 @@ public class JdbcDao {
     private static final String INSERT_PAPER_AUTHOR = "INSERT INTO paper_authors (paperId, userId) " +
             "VALUES (?, ?)";
     private static final String GET_ALL_AUTHOR = "SELECT * FROM user where role = ?";
+    private static final String GET_ALL_PAPER = "SELECT * FROM paper";
 
 
     public boolean registerUser(UserDTO userDTO) throws SQLException {
@@ -156,6 +157,26 @@ public class JdbcDao {
                 userDTO.setEmail(rs.getString("email"));
                 userDTO.setUserId(rs.getInt("id"));
                 ll.add(userDTO);
+            }
+
+        } catch (SQLException e) {
+            // print SQL exception information
+            printSQLException(e);
+        }
+        return ll;
+    }
+
+    public List<PaperDTO> getAllPaper() {
+        List<PaperDTO> ll = new LinkedList();
+        try (Connection connection = DriverManager
+                .getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+             // Step 2:Create a statement using connection object
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_PAPER)) {
+            // Step 3: Execute the query or update query
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                PaperDTO paperDTO = new PaperDTO();
+                ll.add(paperDTO);
             }
 
         } catch (SQLException e) {
